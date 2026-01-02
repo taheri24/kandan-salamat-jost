@@ -1,0 +1,53 @@
+// Board styles with Trello theme
+.board-page {
+  background-color: #0079bf;
+  min-height: 100vh;
+  padding: 10px;
+}
+
+.board-header {
+  margin-bottom: 20px;
+
+  h1 {
+    color: white;
+    font-size: 24px;
+    margin: 0;
+  }
+}
+
+.list-container {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+}
+
+.list {
+  background-color: #ebecf0;
+  border-radius: 3px;
+  width: 272px;
+  padding: 8px;
+  flex-shrink: 0;
+
+  h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #172b4d;
+  }
+}
+
+.cards {
+  .card {
+    background-color: white;
+    border-radius: 3px;
+    padding: 8px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+    cursor: pointer;
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: #172b4d;
+    }
+  }
+}

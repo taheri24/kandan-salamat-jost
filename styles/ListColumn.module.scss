@@ -1,0 +1,136 @@
+.list {
+  background-color: #ebecf0;
+  border-radius: 3px;
+  width: 272px;
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.listTitle {
+  font-size: 14px;
+  color: #172b4d;
+  margin: 0;
+  flex-grow: 1;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 3px;
+
+  &:hover {
+    background-color: rgba(9,30,66,.08);
+  }
+}
+
+.listTitleInput {
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #172b4d;
+  width: 100%;
+  padding: 4px;
+  border-radius: 3px;
+
+  &:focus {
+    background-color: white;
+    box-shadow: inset 0 0 0 2px #0079bf;
+  }
+}
+
+.deleteListBtn {
+  background: none;
+  border: none;
+  color: #6b778c;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 3px;
+
+  &:hover {
+    color: #172b4d;
+    background-color: rgba(9,30,66,.08);
+  }
+}
+
+.cards {
+  .card {
+    background-color: white;
+    border-radius: 3px;
+    padding: 8px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+    cursor: pointer;
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: #172b4d;
+    }
+  }
+}
+
+.addCard {
+  background-color: rgba(9,30,66,.08);
+  border-radius: 3px;
+  padding: 8px;
+  color: #6b778c;
+  cursor: pointer;
+  font-size: 14px;
+
+  &:hover {
+    background-color: rgba(9,30,66,.12);
+    color: #172b4d;
+  }
+}
+
+.addCardInput {
+  background: white;
+  border: none;
+  border-radius: 3px;
+  padding: 8px;
+  width: 100%;
+  font-size: 14px;
+  color: #172b4d;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.addCardActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.addBtn {
+  background: #5aac44;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+
+  &:hover {
+    background: #61bd4f;
+  }
+}
+
+.cancelBtn {
+  background: none;
+  color: #6b778c;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px;
+
+  &:hover {
+    color: #172b4d;
+  }
+}

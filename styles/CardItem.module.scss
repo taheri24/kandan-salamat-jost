@@ -1,0 +1,54 @@
+.card {
+  background-color: white;
+  border-radius: 3px;
+  padding: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 0 rgba(9,30,66,.25);
+  position: relative;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 14px;
+  color: #172b4d;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 3px;
+
+  &:hover {
+    background-color: rgba(9,30,66,.08);
+  }
+}
+
+.cardTitleInput {
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #172b4d;
+  width: 100%;
+  padding: 4px;
+  border-radius: 3px;
+
+  &:focus {
+    background-color: white;
+    box-shadow: inset 0 0 0 2px #0079bf;
+  }
+}
+
+.deleteCardBtn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: none;
+  border: none;
+  color: #6b778c;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px;
+  border-radius: 3px;
+
+  &:hover {
+    color: #172b4d;
+    background-color: rgba(9,30,66,.08);
+  }
+}
