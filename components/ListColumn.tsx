@@ -116,7 +116,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
             autoFocus
           />
         ) : (
-          <h3 className={styles.listTitle} onClick={() => setIsEditing(true)}>
+          <h3 role="editCaption" className={styles.listTitle} onClick={() => setIsEditing(true)}>
             {list.name}
           </h3>
         )}

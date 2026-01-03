@@ -68,22 +68,20 @@ export default function ListContainer({ onCardClick }: ListContainerProps) {
     board.setDraggingSource(event.active.id as string);
     setDraggingId(event.active.id as string)
   };
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     const domEvent = event.activatorEvent;
     setDraggingId('');
     board.setDragOverID('');
-
-    if (domEvent instanceof MouseEvent) {
-      const sourceElement = domEvent.target as HTMLElement;
-      if (sourceElement.getAttribute('role') == 'button') return
-    }
+    const sourceElement =domEvent instanceof MouseEvent ?  domEvent.target as HTMLElement : undefined;
+    const srcRole=sourceElement?.getAttribute('role');
+      if ( srcRole== 'button') return
     if (!over) return;
-
-    if (over.id == active.id) {
+console.log({sourceElement},srcRole);
+    if (over.id == active.id && srcRole=='editCaption') {
       board.editMode(active.id as string, true);
     }
+
     if (active.data.current?.type === 'list' && board.getListID(active?.id as string) === board.getListID(over?.id as string)) {
       const oldIndex = lists.findIndex(l => l.id === active.id);
       const newIndex = lists.findIndex(l => l.id === over.id);
@@ -119,7 +117,7 @@ export default function ListContainer({ onCardClick }: ListContainerProps) {
   }
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragMove={handleDragMove} >
-      <main key={key} className={styles.listContainer}>
+      <div key={key} className={styles.listContainer}>
         <SortableContext items={lists.map(l => l.id)} strategy={horizontalListSortingStrategy}>
           {lists.map(list => (
             <ListColumn key={list.id} list={list} onCardClick={onCardClick} />
@@ -149,7 +147,7 @@ export default function ListContainer({ onCardClick }: ListContainerProps) {
             + Add another list
           </div>
         )}
-      </main>
+      </div>
       <ToastContainer />
     </DndContext>
   );

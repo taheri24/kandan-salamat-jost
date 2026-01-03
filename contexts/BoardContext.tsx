@@ -152,6 +152,8 @@ export class Board {
     this.state.board.revision++;
     this.save();
     this.emit('listsReordered', { newOrder });
+    this.editMode('all',false);
+
   }
 
   addCard(listId: string, title: string) {
@@ -242,6 +244,7 @@ export class Board {
     this.state.board.revision++;
     this.save();
     this.emit('cardMoved', { cardId, toListId, index });
+  this.editMode('all',false);
   }
 
   addComment(cardId: string, text: string, author?: string) {
@@ -287,6 +290,16 @@ export class Board {
   }
   editMode(id:string,nextState:boolean){
      const card= this.state.cards[id];
+     if(id=='all'){
+      if(nextState) throw new Error('all mode must be false');
+      for (const cardId of  Object.keys(this.state.cards)){
+        this.state.cards[cardId].editing=nextState;  
+      }
+      for (const listId of  Object.keys(this.state.lists)){
+        this.state.lists[listId].editing=nextState;  
+      }
+      return ;
+     }
      if(card){
        card.editing=nextState;
      } 

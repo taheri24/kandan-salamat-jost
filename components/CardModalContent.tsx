@@ -40,7 +40,8 @@ export const CardModalContent: React.FC<CardModalContentProps> = ({ cardId, onCl
   }, [handleClose]);
 
   const handleTitleSubmit = () => {
-    if (title.trim()) {
+    if(!cardId || !card) return;
+    if (title.trim() ) {
       board.updateCardTitle(cardId, title.trim());
     } else {
       setTitle(card.title);
@@ -49,6 +50,7 @@ export const CardModalContent: React.FC<CardModalContentProps> = ({ cardId, onCl
   };
 
   const handleAddComment = () => {
+    if(!cardId || !card) return;
     if (newComment.trim()) {
       board.addComment(cardId, newComment.trim());
       setNewComment('');
@@ -56,6 +58,7 @@ export const CardModalContent: React.FC<CardModalContentProps> = ({ cardId, onCl
   };
 
   const handleDelete = () => {
+    if(!cardId || !card) return;
     board.deleteCard(cardId);
     handleClose();
   };
@@ -73,7 +76,7 @@ export const CardModalContent: React.FC<CardModalContentProps> = ({ cardId, onCl
               autoFocus
             />
           ) : (
-            <span onClick={() => setIsEditingTitle(true)}>{card.title}</span>
+            <span role="button" onClick={() => setIsEditingTitle(true)}>{card?.title}</span>
           )}
         </h2>
       </div>

@@ -83,8 +83,8 @@ button.editIcon {
   position: absolute;
   background: transparent;
   font-size: 14px;
-  top: 5px;
-  left: 5px;
+  top: 12px;
+  left: 9px;
   right: 15px;
   color: #172b4d;
   padding: 4px;
@@ -112,7 +112,13 @@ button.editIcon {
   }
 }
 
-.dragging {
+.cardTitleText {
+  width:100%;
+  padding:3px;
+ &:hover {
+    background-color: rgba(9,30,66,.08);
+
+  }
 }
 
 .emptyCard {

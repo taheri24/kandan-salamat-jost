@@ -101,7 +101,7 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
            <p style={{visibility:isEditing?'hidden':undefined}} className={styles.cardTitle} onDoubleClick={() => {
             //setIsEditing(true)
            }}>
-             <span className={styles.cardTitleText}>
+             <span role="editCaption" className={styles.cardTitleText}>
                 {card.title}
              </span>
             
