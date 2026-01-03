@@ -30,7 +30,9 @@ export default function BoardHeader({ lists, onListSelect }:BoardHeaderProps) {
       </select>
       <button className={`seed-button ${isSeeded ? 'seeded' : ''}`} onClick={() => {
         const before = state.board.lists.length;
+         
         seedBoard(board);
+        board.UiPatcherFn?.();
         const after = board.getState().board.lists.length;
         if (after > before) {
           setIsSeeded(true);

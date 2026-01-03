@@ -13,7 +13,9 @@ export function seedBoard(board: Board) {
     comments: {},
   } as BoardState;
   board.state = emptyState;
-
+  board.tx(()=>{
+    
+  
   // Save the empty state
   board.save();
 
@@ -34,4 +36,5 @@ export function seedBoard(board: Board) {
   board.addCard(inProgressId, 'Add seed functionality');
   board.addCard(doneId, 'Setup Next.js');
   board.addCard(doneId, 'Initialize codebase');
+});
 }

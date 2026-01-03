@@ -1,14 +1,16 @@
+export type ID = string;
+
 export interface Board {
-  id: string;
+  id: ID;
   name: string;
-  lists: string[]; // array of list ids
+  lists: ID[]; // array of list ids
   revision: number;
 }
 
 export interface List {
-  id: string;
+  id: ID;
   name: string;
-  cards: string[]; // array of card ids
+  cards: ID[]; // array of card ids
   revision: number;
   editing?:boolean;
   draggingTimeStamp?:number;
@@ -16,10 +18,10 @@ export interface List {
 }
 
 export interface Card {
-  id: string;
+  id: ID;
   title: string;
   description?: string;
-  comments: string[]; // array of comment ids
+  comments: ID[]; // array of comment ids
   revision: number;
   selected?: boolean;
   editing?:boolean;
@@ -27,7 +29,7 @@ export interface Card {
 }
 
 export interface Comment {
-  id: string;
+  id: ID;
   text: string;
   author?: string;
   timestamp: Date;
@@ -36,10 +38,10 @@ export interface Comment {
 
 export interface BoardState {
   board: Board;
-  draggingSourceID?: string;
-  dragOverID?: string;
-  dragOverListID?: string;
-  lists: Record<string, List>;
-  cards: Record<string, Card>;
-  comments: Record<string, Comment>;
+  draggingSourceID?: ID;
+  dragOverID?: ID;
+  dragOverListID?: ID;
+  lists: Record<ID, List>;
+  cards: Record<ID, Card>;
+  comments: Record<ID, Comment>;
 }

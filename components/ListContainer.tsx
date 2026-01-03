@@ -20,11 +20,8 @@ export default function ListContainer({ onCardClick }: ListContainerProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [newListName, setNewListName] = useState('');
   const state = board.getState();
-  
+  board.UiPatcherFn=updateKey;  
   const lists = state.board.lists.map(listId => state.lists[listId]).filter(Boolean);
-
-  
-
   useEffect(() => {
     board.on(BOARD_EVENTS.LIST_ADDED, (data) => toast.success(`List "${data.name}" added`));
     board.on(BOARD_EVENTS.LIST_TITLE_UPDATED, (data) => toast.success(`List title updated to "${data.name}"`));
@@ -145,7 +142,7 @@ console.log({sourceElement},sourceElement?.innerHTML,srcRole);
           </div>
         )}
       </div>
-      <ToastContainer />
+      <ToastContainer position="bottom-right" />
     </DndContext>
   );
 };

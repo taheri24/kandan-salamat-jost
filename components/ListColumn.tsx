@@ -29,6 +29,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
     transform,
     transition,
     isDragging,
+    setActivatorNodeRef
   } = useSortable({
     id: list.id,
     data: { type: 'list' },
@@ -85,6 +86,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
       handleCancelCard();
     }
   };
+  
   const boardState = board.getState();
   const draggingTarget = list.id == boardState.dragOverID;
   const emptyPlaceID = `emptyPlace_${list.id}`;
@@ -98,18 +100,14 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
       }, 10)
     }
   }, [draggingTarget])
-  if (isDragging && transform){ 
-    console.log('>>>',transform)
-   
-  }
-  const style = {
+   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
 
   return (
-    <div ref={setNodeRef} style={style} id={list.id} className={`${styles.list} ${isDragging ? styles.dragging : ''}`} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} id={list.id} className={`${styles.list} ${isDragging ? styles.dragging : ''}`}  >
       <div  className={styles.listHeader} >
         {isEditing ? (
           <input
@@ -121,7 +119,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
             autoFocus
           />
         ) : (
-          <h3 role="editCaption" className={styles.listTitle} onClick={() => setIsEditing(true)}>
+          <h3 {...listeners} {...attributes}  ref={setActivatorNodeRef} role="editCaption" className={styles.listTitle} onClick={() => setIsEditing(true)}>
             {list.name}
           </h3>
         )}
@@ -132,6 +130,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
       <div className={styles.cards}  >
        
 <div>
+  
         <SortableContext items={cards.map(c => c.id)} strategy={verticalListSortingStrategy}>
         {cards.map(card => (
           <CardItem key={card.id} card={card} listId={list.id} onClick={() => onCardClick?.(card.id)} />

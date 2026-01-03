@@ -23,8 +23,15 @@ export type BoardEventName = typeof BOARD_EVENTS[keyof typeof BOARD_EVENTS];
 
 // Core-logic: Board state management
 export class Board {
+  disableEmitter=false;
+  UiPatcherFn?: Function;
   allIDs(){
     return Object.keys(this.state.lists).concat(Object.keys(this.state.cards));
+  }
+  tx(fn:Function){
+    this.disableEmitter=true;
+    fn();
+    this.disableEmitter=false;
   }
   getDraggingIndicatorText():string  {
     const sourceName = this.getNameByID(this.state.draggingSourceID||'');
@@ -37,21 +44,19 @@ export class Board {
   }
     state: BoardState;
   private onSave: (state: BoardState) => void;
-  private idCounter = 0;
+  private listCounter = 0;
+  private cardCounter = 0;
+  private commentCounter = 0;
   private listeners = new Map<BoardEventName, Array<(data?: any) => void>>();
 
   constructor(initialState: BoardState | null, onSave: (state: BoardState) => void) {
     this.onSave = onSave;
     if (initialState) {
       this.state = { ...initialState };
-      // Initialize id counter based on existing ids
-      const allIds = [
-        initialState.board.id,
-        ...Object.keys(initialState.lists),
-        ...Object.keys(initialState.cards),
-        ...Object.keys(initialState.comments),
-      ];
-      this.idCounter = Math.max(...allIds.map(id => parseInt(id) || 0)) + 1;
+      // Initialize counters based on existing ids
+      this.listCounter = Math.max(...Object.keys(initialState.lists).map(id => parseInt(id.split('-')[1]) || 0)) + 1;
+      this.cardCounter = Math.max(...Object.keys(initialState.cards).map(id => parseInt(id.split('-')[1]) || 0)) + 1;
+      this.commentCounter = Math.max(...Object.keys(initialState.comments).map(id => parseInt(id.split('-')[1]) || 0)) + 1;
     } else {
       seedBoard(this);
       this.state = this.getState();
@@ -70,6 +75,7 @@ export class Board {
   }
 
   private emit(event: BoardEventName, data?: any) {
+    if(this.disableEmitter) return;
     const list = this.listeners.get(event);
     if (list) {
       list.forEach(fn => fn(data));
@@ -80,8 +86,17 @@ export class Board {
     return a.length === b.length && a.every((val, idx) => val === b[idx]);
   }
 
-  private generateId(): string {
-    return (this.idCounter++).toString();
+  private generateId(recordKey: string): string {
+    switch (recordKey) {
+      case 'list':
+        return `list-${this.listCounter++}`;
+      case 'card':
+        return `card-${this.cardCounter++}`;
+      case 'comment':
+        return `comment-${this.commentCounter++}`;
+      default:
+        throw new Error(`Unknown recordKey: ${recordKey}`);
+    }
   }
 
   getState(): BoardState {
@@ -106,7 +121,7 @@ export class Board {
   }
 
   addList(name: string) {
-    const id = this.generateId();
+    const id = this.generateId('list');
     const list: List = { id, name, cards: [], revision: 0 };
     this.state.lists[id] = list;
     this.state.board.lists.push(id);
@@ -155,7 +170,7 @@ export class Board {
 
   addCard(listId: string, title: string) {
     if (this.state.lists[listId]) {
-      const id = this.generateId();
+      const id = this.generateId('card');
       const card: Card = { id, title, description: undefined, comments: [], revision: 0, selected: false };
       this.state.cards[id] = card;
       this.state.lists[listId].cards.push(id);
@@ -246,7 +261,7 @@ export class Board {
 
   addComment(cardId: string, text: string, author?: string) {
     if (this.state.cards[cardId]) {
-      const id = this.generateId();
+      const id = this.generateId('comment');
       const comment: Comment = { id, text, author, timestamp: new Date(), revision: 0 };
       this.state.comments[id] = comment;
       this.state.cards[cardId].comments.push(id);

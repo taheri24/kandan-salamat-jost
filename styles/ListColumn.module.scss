@@ -4,7 +4,7 @@
   width: 272px;
   padding: 8px;
   flex-shrink: 0;
-      max-height: fit-content;
+  height: 100%;
 }
 
 .dragging {
@@ -88,7 +88,7 @@
   color: #6b778c;
   cursor: pointer;
   font-size: 14px;
-
+max-height: 67px;
   &:hover {
     background-color: rgba(9,30,66,.12);
     color: #172b4d;
