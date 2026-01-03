@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useBoardState } from '@/contexts/BoardContext';
 import { List } from '@/utils/types';
 import { seedBoard } from '@/utils/seed';
@@ -14,6 +14,10 @@ export default function BoardHeader({ lists, onListSelect }:BoardHeaderProps) {
   const board = useBoardState();
   const state = board.getState();
   const [isSeeded, setIsSeeded] = useState(false);
+
+  useEffect(() => {
+    document.title = state.board.name;
+  }, [state.board.name]);
 
   return (
     <header className='board-header'>

@@ -28,6 +28,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
     setNodeRef,
     transform,
     transition,
+    isDragging,
   } = useSortable({
     id: list.id,
     data: { type: 'list' },
@@ -97,13 +98,18 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
       }, 10)
     }
   }, [draggingTarget])
+  if (isDragging && transform){ 
+    console.log('>>>',transform)
+   
+  }
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
-    <div ref={setNodeRef} style={style} id={list.id} className={styles.list} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} id={list.id} className={`${styles.list} ${isDragging ? styles.dragging : ''}`} {...attributes} {...listeners}>
       <div  className={styles.listHeader} >
         {isEditing ? (
           <input
@@ -124,9 +130,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
         </button>
       </div>
       <div className={styles.cards}  >
-        {  draggingTarget && boardState.draggingSourceID != boardState.dragOverID && <section id={emptyPlaceID} className={styles.emptyCard}>
-          {board.getDraggingIndicatorText()}
-        </section>}
+       
 <div>
         <SortableContext items={cards.map(c => c.id)} strategy={verticalListSortingStrategy}>
         {cards.map(card => (
@@ -155,7 +159,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
           </div>
         </div>
       ) : (
-        <div className={styles.addCard} onClick={() => setIsAddingCard(true)}>
+        <div role="button" data-role="button" className={styles.addCard} onMouseUp={(e =>{  e.stopPropagation();e.preventDefault(); setIsAddingCard(true) })}>
           + Add another card
         </div>
       )}

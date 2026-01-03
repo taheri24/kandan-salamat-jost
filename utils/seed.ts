@@ -4,20 +4,23 @@ import { BoardState } from '@/utils/types';
 import { v4 } from 'uuid';
 
 export function seedBoard(board: Board) {
-  
-  // Clear existing data if any
-   board.state = {
+
+  // Clear all state
+  const emptyState = {
     board: { id: v4(), name: 'Demo Board', lists: [], revision: 0 },
     lists: {},
     cards: {},
     comments: {},
   } as BoardState;
-  
-  // Add sample lists
+  board.state = emptyState;
+
+  // Save the empty state
+  board.save();
+
+  // Start seeding
   board.addList('To Do');
   board.addList('In Progress');
   board.addList('Done');
-
   // Get the list IDs
   const lists = board.getState().board.lists;
   const todoId = lists[0];

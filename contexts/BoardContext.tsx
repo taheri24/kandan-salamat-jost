@@ -51,7 +51,7 @@ export class Board {
         ...Object.keys(initialState.cards),
         ...Object.keys(initialState.comments),
       ];
-      this.idCounter = Math.max(...allIds.map(id => parseInt(id.replace(/\D/g, '')) || 0)) + 1;
+      this.idCounter = Math.max(...allIds.map(id => parseInt(id) || 0)) + 1;
     } else {
       seedBoard(this);
       this.state = this.getState();
@@ -81,7 +81,7 @@ export class Board {
   }
 
   private generateId(): string {
-    return `id${this.idCounter++}`;
+    return (this.idCounter++).toString();
   }
 
   getState(): BoardState {
@@ -92,7 +92,7 @@ export class Board {
     this.state = { ...newState };
   }
 
-  private save() {
+  public save() {
     this.onSave(this.state);
   }
 

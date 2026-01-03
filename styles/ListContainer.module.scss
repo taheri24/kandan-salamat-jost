@@ -2,6 +2,8 @@
   display: flex;
   gap: 10px;
   overflow-x: auto;
+  scroll-behavior: smooth;
+  position: relative;
 }
 
 .addList {
@@ -16,7 +18,8 @@
   align-items: center;
   justify-content: center;
   font-size: 14px;
-
+  min-height: 30px;
+max-height: fit-content;
   &:hover {
     background-color: rgba(255,255,255,0.4);
   }

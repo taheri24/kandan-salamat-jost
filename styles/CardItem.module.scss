@@ -7,6 +7,11 @@
   position: relative;
 }
 
+.dragging {
+  opacity: 0.5;
+  z-index: 1000;
+}
+
 .cardCheckbox {
   margin-right: 8px;
 }
@@ -124,9 +129,9 @@ button.editIcon {
 .emptyCard {
   height: 10px;
   padding:0 1rem;
-  color:eee;
+  color: #eee;
   font-size: small;
-  overflow: height;
+  overflow: hidden;
   transition: height 400ms ease;
   background: #eee;
   opacity: 0.5;

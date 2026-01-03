@@ -20,13 +20,12 @@ export default function ListContainer({ onCardClick }: ListContainerProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [newListName, setNewListName] = useState('');
   const state = board.getState();
-  const [draggingId,setDraggingId] = useState('');
-  const [dragOverID,setDragOverID] = useState('');
   
   const lists = state.board.lists.map(listId => state.lists[listId]).filter(Boolean);
 
+  
+
   useEffect(() => {
-    board.on(BOARD_EVENTS.BOARD_TITLE_UPDATED, (data) => toast.success(`Board title updated to "${data.name}"`));
     board.on(BOARD_EVENTS.LIST_ADDED, (data) => toast.success(`List "${data.name}" added`));
     board.on(BOARD_EVENTS.LIST_TITLE_UPDATED, (data) => toast.success(`List title updated to "${data.name}"`));
     board.on(BOARD_EVENTS.LIST_DELETED, (data) => toast.info(`List deleted`));
@@ -66,18 +65,17 @@ export default function ListContainer({ onCardClick }: ListContainerProps) {
 
   const handleDragStart = (event: DragStartEvent) => {
     board.setDraggingSource(event.active.id as string);
-    setDraggingId(event.active.id as string)
   };
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     const domEvent = event.activatorEvent;
-    setDraggingId('');
     board.setDragOverID('');
     const sourceElement =domEvent instanceof MouseEvent ?  domEvent.target as HTMLElement : undefined;
-    const srcRole=sourceElement?.getAttribute('role');
-      if ( srcRole== 'button') return
+    const srcRole=sourceElement?.getAttribute('role') || sourceElement?.role || sourceElement?.getAttribute('data-role');
+    console.log('sourceElement>>>',sourceElement);
+    if ( srcRole== 'button') return;
     if (!over) return;
-console.log({sourceElement},srcRole);
+console.log({sourceElement},sourceElement?.innerHTML,srcRole);
     if (over.id == active.id && srcRole=='editCaption') {
       board.editMode(active.id as string, true);
     }
@@ -109,7 +107,6 @@ console.log({sourceElement},srcRole);
   };
   const handleDragMove=(event:DragMoveEvent)=>{
     if(event.over?.id){
-      setDragOverID(event.over?.id as string);
       board.setDraggingSource(event.active.id as string);
       board.setDragOverID(event.over?.id as string);
 
@@ -117,7 +114,7 @@ console.log({sourceElement},srcRole);
   }
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragMove={handleDragMove} >
-      <div  className={styles.listContainer}>
+      <div  key={key} className={styles.listContainer}>
         <SortableContext items={lists.map(l => l.id)} strategy={horizontalListSortingStrategy}>
           {lists.map(list => (
             <ListColumn key={list.id} list={list} onCardClick={onCardClick} />
@@ -143,7 +140,7 @@ console.log({sourceElement},srcRole);
             </div>
           </div>
         ) : (
-          <div className={styles.addList} onClick={() => setIsAdding(true)}>
+          <div role="button" className={styles.addList} onMouseUp={() => setIsAdding(true)}>
             + Add another list
           </div>
         )}
