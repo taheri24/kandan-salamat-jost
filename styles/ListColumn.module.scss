@@ -5,6 +5,7 @@
   padding: 8px;
   flex-shrink: 0;
   height: 100%;
+  min-height: 200px;
 }
 
 .dragging {
@@ -29,7 +30,7 @@
   border-radius: 3px;
 
   &:hover {
-    background-color: rgba(9,30,66,.08);
+    background-color: rgba(9, 30, 66, .08);
   }
 }
 
@@ -59,9 +60,9 @@
 
   &:hover {
     color: #172b4d;
-    background-color: rgba(9,30,66,.08);
+    background-color: rgba(9, 30, 66, .08);
   }
-  
+
 }
 
 .cards {
@@ -70,7 +71,7 @@
     border-radius: 3px;
     padding: 8px;
     margin-bottom: 8px;
-    box-shadow: 0 1px 0 rgba(9,30,66,.25);
+    box-shadow: 0 1px 0 rgba(9, 30, 66, .25);
     cursor: pointer;
 
     p {
@@ -82,15 +83,16 @@
 }
 
 .addCard {
-  background-color: rgba(9,30,66,.08);
+  background-color: rgba(9, 30, 66, .08);
   border-radius: 3px;
   padding: 8px;
   color: #6b778c;
   cursor: pointer;
   font-size: 14px;
-max-height: 67px;
+  max-height: 67px;
+
   &:hover {
-    background-color: rgba(9,30,66,.12);
+    background-color: rgba(9, 30, 66, .12);
     color: #172b4d;
   }
 }
@@ -145,7 +147,7 @@ max-height: 67px;
 
 .emptyCard {
   height: 10px;
-  padding:0 1rem;
+  padding: 0 1rem;
   color: #eee;
   font-size: small;
   overflow: hidden;

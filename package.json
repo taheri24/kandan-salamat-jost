@@ -32,6 +32,8 @@
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.2",
     "@testing-library/jest-dom": "^6.9.1",
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.2.7",
     "jsdom": "^23.2.0",
     "sass": "^1.97.1",
     "typescript": "^5.9.3",

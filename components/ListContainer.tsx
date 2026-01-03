@@ -72,7 +72,6 @@ export default function ListContainer({ onCardClick }: ListContainerProps) {
     console.log('sourceElement>>>',sourceElement);
     if ( srcRole== 'button') return;
     if (!over) return;
-console.log({sourceElement},sourceElement?.innerHTML,srcRole);
     if (over.id == active.id && srcRole=='editCaption') {
       board.editMode(active.id as string, true);
     }
@@ -83,6 +82,7 @@ console.log({sourceElement},sourceElement?.innerHTML,srcRole);
       const newOrder = arrayMove(lists.map(l => l.id), oldIndex, newIndex);
       board.reorderLists(newOrder);
       updateKey();
+      board.editMode('all', false);
 
     } else if (active.data.current?.type === 'card') {
       const overType = over.data.current?.type;

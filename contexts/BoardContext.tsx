@@ -23,26 +23,26 @@ export type BoardEventName = typeof BOARD_EVENTS[keyof typeof BOARD_EVENTS];
 
 // Core-logic: Board state management
 export class Board {
-  disableEmitter=false;
+  disableEmitter = false;
   UiPatcherFn?: Function;
-  allIDs(){
+  allIDs() {
     return Object.keys(this.state.lists).concat(Object.keys(this.state.cards));
   }
-  tx(fn:Function){
-    this.disableEmitter=true;
+  tx(fn: Function) {
+    this.disableEmitter = true;
     fn();
-    this.disableEmitter=false;
+    this.disableEmitter = false;
   }
-  getDraggingIndicatorText():string  {
-    const sourceName = this.getNameByID(this.state.draggingSourceID||'');
+  getDraggingIndicatorText(): string {
+    const sourceName = this.getNameByID(this.state.draggingSourceID || '');
     const overName = this.getNameByID(this.state.dragOverID || '');
-    const isOverCard = !!this.state.cards[this.state.dragOverID|| ''];
+    const isOverCard = !!this.state.cards[this.state.dragOverID || ''];
     const isSrcCard = !!this.state.cards[this.state.draggingSourceID || ''];
-    
-    const preposition = isOverCard==isSrcCard ? 'before' : 'to';
+
+    const preposition = isOverCard == isSrcCard ? 'before' : 'to';
     return `Moving "${sourceName}" ${preposition} "${overName}"`;
   }
-    state: BoardState;
+  state: BoardState;
   private onSave: (state: BoardState) => void;
   private listCounter = 0;
   private cardCounter = 0;
@@ -75,7 +75,7 @@ export class Board {
   }
 
   private emit(event: BoardEventName, data?: any) {
-    if(this.disableEmitter) return;
+    if (this.disableEmitter) return;
     const list = this.listeners.get(event);
     if (list) {
       list.forEach(fn => fn(data));
@@ -164,7 +164,7 @@ export class Board {
     this.state.board.revision++;
     this.save();
     this.emit('listsReordered', { newOrder });
-    this.editMode('all',false);
+    this.editMode('all', false);
 
   }
 
@@ -216,17 +216,17 @@ export class Board {
       this.emit('cardDeleted', { id });
     }
   }
-  getListID(cardId:string){
-    if(cardId==null || !this.state.cards[cardId]) return null;
+  getListID(cardId: string) {
+    if (cardId == null || !this.state.cards[cardId]) return null;
     return Object.values(this.state.lists).find(l => l.cards.includes(cardId))?.id;
   }
-  getNameByID(id:string){
-    const card=this.state.cards[id  ];
-    if(card){
+  getNameByID(id: string) {
+    const card = this.state.cards[id];
+    if (card) {
       return card.title
     }
-    const list=this.state.lists[id];
-    if(list){
+    const list = this.state.lists[id];
+    if (list) {
       return list.name
     }
     return ''
@@ -256,7 +256,7 @@ export class Board {
     this.state.board.revision++;
     this.save();
     this.emit('cardMoved', { cardId, toListId, index });
-  this.editMode('all',false);
+    this.editMode('all', false);
   }
 
   addComment(cardId: string, text: string, author?: string) {
@@ -278,50 +278,50 @@ export class Board {
       this.emit('commentAdded', { id, cardId, text, author });
     }
   }
-  setDragOverID(id:string){
-    this.state.dragOverID=id;
-    
-    if(!id){
-      for (const listId of  Object.keys(this.state.lists)){
-        this.state.lists[listId].dragging=false;  
+  setDragOverID(id: string) {
+    this.state.dragOverID = id;
+
+    if (!id) {
+      for (const listId of Object.keys(this.state.lists)) {
+        this.state.lists[listId].dragging = false;
       }
-      return ;
+      return;
     }
 
-    const list=this.state.lists[id];
-    if(list){
-      list.draggingTimeStamp=+Date.now();
-      list.dragging=true;
-      this.state.dragOverListID=list.id;
+    const list = this.state.lists[id];
+    if (list) {
+      list.draggingTimeStamp = +Date.now();
+      list.dragging = true;
+      this.state.dragOverListID = list.id;
     }
-    const card=this.state.cards[id];
-    const listOfCard=this.state.lists[this.getListID(id) || ''];
-    if(card){
-      listOfCard.draggingTimeStamp=+Date.now();
+    const card = this.state.cards[id];
+    const listOfCard = this.state.lists[this.getListID(id) || ''];
+    if (card) {
+      listOfCard.draggingTimeStamp = +Date.now();
     }
   }
-  editMode(id:string,nextState:boolean){
-     const card= this.state.cards[id];
-     if(id=='all'){
-      if(nextState) throw new Error('all mode must be false');
-      for (const cardId of  Object.keys(this.state.cards)){
-        this.state.cards[cardId].editing=nextState;  
+  editMode(id: string, nextState: boolean) {
+    const card = this.state.cards[id];
+    if (id == 'all') {
+      if (nextState) throw new Error('all mode must be false');
+      for (const cardId of Object.keys(this.state.cards)) {
+        this.state.cards[cardId].editing = nextState;
       }
-      for (const listId of  Object.keys(this.state.lists)){
-        this.state.lists[listId].editing=nextState;  
+      for (const listId of Object.keys(this.state.lists)) {
+        this.state.lists[listId].editing = nextState;
       }
-      return ;
-     }
-     if(card){
-       card.editing=nextState;
-     } 
-     const list= this.state.lists[id];
-     if(list){
-       list.editing=nextState;
-     } 
+      return;
+    }
+    if (card) {
+      card.editing = nextState;
+    }
+    const list = this.state.lists[id];
+    if (list) {
+      list.editing = nextState;
+    }
   }
-  setDraggingSource(id:string){
-    this.state.draggingSourceID=id;
+  setDraggingSource(id: string) {
+    this.state.draggingSourceID = id;
   }
 }
 
