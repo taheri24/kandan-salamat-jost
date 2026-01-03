@@ -99,7 +99,7 @@ export class Board {
   addCard(listId: string, title: string) {
     if (this.state.lists[listId]) {
       const id = this.generateId();
-      const card: Card = { id, title, description: undefined, comments: [], revision: 0 };
+      const card: Card = { id, title, description: undefined, comments: [], revision: 0, selected: false };
       this.state.cards[id] = card;
       this.state.lists[listId].cards.push(id);
       this.state.lists[listId].revision++;
@@ -142,7 +142,7 @@ export class Board {
       this.save();
     }
   }
-
+ 
   moveCard(cardId: string, toListId: string, index?: number) {
     if (this.state.cards[cardId] && this.state.lists[toListId]) {
       // Remove from current list
@@ -180,6 +180,14 @@ export class Board {
         }
       }
       this.state.board.revision++;
+      this.save();
+    }
+  }
+
+  toggleCardSelected(id: string) {
+    if (this.state.cards[id]) {
+      this.state.cards[id].selected = !this.state.cards[id].selected;
+      this.state.cards[id].revision++;
       this.save();
     }
   }

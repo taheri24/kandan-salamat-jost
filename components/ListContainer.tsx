@@ -12,7 +12,7 @@ interface ListContainerProps {
   onCardClick?: (cardId: string) => void;
 }
 
-export const ListContainer: React.FC<ListContainerProps> = ({ onCardClick }) => {
+export default function  ListContainer({ onCardClick }:ListContainerProps)   {
   const board = useBoardState();
   const [isAdding, setIsAdding] = useState(false);
   const [newListName, setNewListName] = useState('');
@@ -52,16 +52,20 @@ export const ListContainer: React.FC<ListContainerProps> = ({ onCardClick }) => 
     } else if (active.data.current?.type === 'card') {
       const overType = over.data.current?.type;
       const overData = over.data.current;
+
       if (overType === 'card' && overData) {
         const overListId = overData.listId;
         const overIndex = lists.find(l => l.id === overListId)?.cards.findIndex(c => c === over.id) || 0;
+
         board.moveCard(active.id as string, overListId, overIndex);
       }
+      else if(overType === 'list' && overData) {
+        board.moveCard(active.id as string,over.id as string);
+      } 
     }
   };
-
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext onDragEnd={handleDragEnd} >
       <div className={styles.listContainer}>
         <SortableContext items={lists.map(l => l.id)} strategy={horizontalListSortingStrategy}>
           {lists.map(list => (

@@ -18,6 +18,7 @@ export interface Card {
   description?: string;
   comments: string[]; // array of comment ids
   revision: number;
+  selected?: boolean;
 }
 
 export interface Comment {

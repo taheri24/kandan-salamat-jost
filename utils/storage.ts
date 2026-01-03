@@ -1,3 +1,4 @@
+'use client'
 import { BoardState, Comment } from './types';
 
 const STORAGE_KEY = 'board-state';

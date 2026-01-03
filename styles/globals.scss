@@ -1,5 +1,10 @@
-@import 'variables';
-@import 'mixins';
-@import 'typography';
-@import 'layout';
-@import 'board';
+@use 'variables';
+@use 'mixins';
+@use 'typography';
+@use 'layout';
+@use 'board';
+
+body{
+    padding: 0;
+    margin: 0;
+}
