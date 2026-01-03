@@ -1,10 +1,11 @@
 "use client";
-import React, { createContext, useContext, useRef, useEffect } from 'react';
+import React, { createContext, useContext, useRef, useEffect, useReducer, useMemo } from 'react';
 import { BoardState, Board as BoardType, List, Card, Comment } from '@/utils/types';
 import { useLocalStorageState } from '@/hooks/useLocalStorageState';
-
+import * as uuid from 'uuid'
 // Core-logic: Board state management
 export class Board {
+  public flags=new Map<string,any>()
   private state: BoardState;
   private onSave: (state: BoardState) => void;
   private idCounter = 0;
@@ -142,7 +143,7 @@ export class Board {
       this.save();
     }
   }
- 
+
   moveCard(cardId: string, toListId: string, index?: number) {
     if (this.state.cards[cardId] && this.state.lists[toListId]) {
       // Remove from current list
@@ -190,6 +191,16 @@ export class Board {
       this.state.cards[id].revision++;
       this.save();
     }
+  }
+  editMode(id:string,nextState:boolean){
+     const card= this.state.cards[id];
+     if(card){
+       card.editing=nextState;
+     } 
+     const list= this.state.lists[id];
+     if(list){
+       list.editing=nextState;
+     } 
   }
 }
 

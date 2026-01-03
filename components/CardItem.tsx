@@ -16,7 +16,7 @@ interface CardItemProps {
 
 export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => {
   const board = useBoardState();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(card.editing);
   const [title, setTitle] = useState(card.title);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -44,6 +44,7 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
       setTitle(card.title);
     }
     setIsEditing(false);
+    board.editMode(card.id,false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -52,15 +53,18 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
     } else if (e.key === 'Escape') {
       setTitle(card.title);
       setIsEditing(false);
+      board.editMode(card.id,false);
     }
   };
 
   const handleDelete = () => {
-    board.deleteCard(card.id);
+    if (window.confirm('Are you sure you want to delete this card?')) {
+      board.deleteCard(card.id);
+    }
   };
   return (
-    <div ref={setNodeRef} style={style} className={`${styles.card} ${isDragging ? styles.dragging : ''}`} {...attributes} {...listeners}>
-      <button className={styles.deleteCardBtn} onClick={handleDelete}>
+    <div ref={setNodeRef} data-card-id={card.id} style={style} className={`${styles.card} ${isDragging ? styles.dragging : ''}`} {...attributes} {...listeners}>
+      <button role="button" className={styles.deleteCardBtn} onMouseDown={handleDelete}>
         ×
       </button>
        
@@ -73,24 +77,26 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
           onKeyDown={handleKeyDown}
           autoFocus
         />
-      ) : (
-        <>
-           <p className={styles.cardTitle} onDoubleClick={() => setIsEditing(true)}>
+      ) :<></>}   
+         
+           <p style={{visibility:isEditing?'hidden':undefined}} className={styles.cardTitle} onDoubleClick={() => {
+            setIsEditing(true)
+           }}>
              <span className={styles.cardTitleText}>
                {card.title}
              </span>
-             {card.comments.length > 0 && (
+             <button role="button" onMouseDown={(e) => { e.stopPropagation();board.editMode(card.id,false);  onClick?.() }} className={styles.editIcon}>
+               <FaEdit />
+             </button>
+           {card.comments.length > 0 && (
                <span className={styles.commentBadge}>
                  <FaComment /> {card.comments.length}
                </span>
              )}
-             <button onMouseUp={(e) => { e.stopPropagation(); onClick?.() }} className={styles.editIcon}>
-               <FaEdit />
-             </button>
+            
            </p>
             
-        </>
-      )}
+       
     </div>
   );
 };

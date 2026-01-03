@@ -1,10 +1,10 @@
 "use client"
 'use client';
 
-import React, { useState } from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import { useBoardState } from '@/contexts/BoardContext';
 import { ListColumn } from './ListColumn';
-import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import styles from '@/styles/ListContainer.module.scss';
 
@@ -13,12 +13,13 @@ interface ListContainerProps {
 }
 
 export default function  ListContainer({ onCardClick }:ListContainerProps)   {
+  const [key,updateKey]= useReducer(a=>a+1,0);
   const board = useBoardState();
   const [isAdding, setIsAdding] = useState(false);
   const [newListName, setNewListName] = useState('');
   const state = board.getState();
+  const draggingIdRef= useRef('');
   const lists = state.board.lists.map(listId => state.lists[listId]).filter(Boolean);
-
   const handleAddList = () => {
     if (newListName.trim()) {
       board.addList(newListName.trim());
@@ -40,10 +41,19 @@ export default function  ListContainer({ onCardClick }:ListContainerProps)   {
     }
   };
 
+  const handleDragStart = (event: DragStartEvent) => {
+    draggingIdRef.current = event.active.id as string;    
+    board.flags.set(draggingIdRef.current,true);
+    
+    // Add visual element here if needed, but rotation is handled in components
+  };
+   
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
-
+    if(over.id==active.id) board.editMode(active.id as string,true);
+    draggingIdRef.current='';
+    updateKey();
     if (active.data.current?.type === 'list') {
       const oldIndex = lists.findIndex(l => l.id === active.id);
       const newIndex = lists.findIndex(l => l.id === over.id);
@@ -52,11 +62,9 @@ export default function  ListContainer({ onCardClick }:ListContainerProps)   {
     } else if (active.data.current?.type === 'card') {
       const overType = over.data.current?.type;
       const overData = over.data.current;
-
       if (overType === 'card' && overData) {
         const overListId = overData.listId;
         const overIndex = lists.find(l => l.id === overListId)?.cards.findIndex(c => c === over.id) || 0;
-
         board.moveCard(active.id as string, overListId, overIndex);
       }
       else if(overType === 'list' && overData) {
@@ -64,9 +72,10 @@ export default function  ListContainer({ onCardClick }:ListContainerProps)   {
       } 
     }
   };
+  
   return (
-    <DndContext onDragEnd={handleDragEnd} >
-      <div className={styles.listContainer}>
+    <DndContext  onDragStart={handleDragStart} onDragEnd={handleDragEnd} >
+      <div key={key} className={styles.listContainer}>
         <SortableContext items={lists.map(l => l.id)} strategy={horizontalListSortingStrategy}>
           {lists.map(list => (
             <ListColumn key={list.id} list={list} onCardClick={onCardClick} />

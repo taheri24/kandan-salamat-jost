@@ -4,6 +4,22 @@
 @use 'layout';
 @use 'board';
 
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.list-select {
+  display: block;
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+.dragging{
+  opacity: 0.5;
+  background-color: yellowgreen !important;
+}
 body{
     padding: 0;
     margin: 0;

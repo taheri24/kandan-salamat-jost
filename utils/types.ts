@@ -10,6 +10,7 @@ export interface List {
   name: string;
   cards: string[]; // array of card ids
   revision: number;
+  editing?:boolean;
 }
 
 export interface Card {
@@ -19,6 +20,8 @@ export interface Card {
   comments: string[]; // array of comment ids
   revision: number;
   selected?: boolean;
+  editing?:boolean;
+
 }
 
 export interface Comment {

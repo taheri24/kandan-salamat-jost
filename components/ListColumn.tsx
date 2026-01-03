@@ -16,7 +16,7 @@ interface ListColumnProps {
 
 export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => {
   const board = useBoardState();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(list.editing);
   const [title, setTitle] = useState(list.name);
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState('');
@@ -45,6 +45,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
       setTitle(list.name);
     }
     setIsEditing(false);
+    board.editMode(list.id,false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -53,6 +54,8 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
     } else if (e.key === 'Escape') {
       setTitle(list.name);
       setIsEditing(false);
+      board.editMode(list.id,false);
+
     }
   };
 
@@ -82,7 +85,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={styles.list}>
+    <div ref={setNodeRef} style={style} id={list.id} className={styles.list}>
       <div className={styles.listHeader} {...attributes} {...listeners}>
         {isEditing ? (
           <input
