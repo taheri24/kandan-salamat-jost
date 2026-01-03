@@ -1,9 +1,16 @@
 // Board styles with Trello theme
 .board-page {
-  background-color: #0079bf;
   min-height: 100vh;
   padding: 10px;
-}
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 1rem;
+  background-color: rgb(46, 126, 175);
+  transition: background-color 0.2s ease-in;
+ 
+ }
 
 .board-header {
   margin-bottom: 20px;

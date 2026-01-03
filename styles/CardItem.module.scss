@@ -3,7 +3,7 @@
   border-radius: 3px;
   padding: 8px;
   margin-bottom: 8px;
-  box-shadow: 0 1px 0 rgba(9,30,66,.25);
+  box-shadow: 0 1px 0 rgba(9, 30, 66, .25);
   position: relative;
 }
 
@@ -32,7 +32,7 @@
   background: white;
   border: 1px solid #ddd;
   border-radius: 3px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
   min-width: 100px;
 }
@@ -64,30 +64,32 @@
   align-items: center;
   position: relative;
 }
-button.editIcon{
-    background: none;
-    padding: 0.5rem;
-  cursor: pointer;
-    border: none;
-    margin: 0 10px;
-    &:hover{
-     background-color: rgba(9,30,66,.08);
 
-    }
+button.editIcon {
+  background: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  border: none;
+  margin: 0 10px;
+
+  &:hover {
+    background-color: rgba(9, 30, 66, .08);
+
+  }
 }
+
 .cardTitleInput {
   border: none;
   position: absolute;
   background: transparent;
   font-size: 14px;
-  top:50%;
-  left:5px;
-  right:5px;
-  transform: translateY(-50%);
+  top: 5px;
+  left: 5px;
+  right: 15px;
   color: #172b4d;
   padding: 4px;
-  padding:3px;
-  border:1px solid #eee;
+  padding: 3px;
+  border: 1px solid #eee;
   outline: none;
   background-color: #fefefe;
 }
@@ -106,6 +108,35 @@ button.editIcon{
 
   &:hover {
     color: #172b4d;
-    background-color: rgba(9,30,66,.08);
+    background-color: rgba(9, 30, 66, .08);
   }
+}
+
+.dragging {
+}
+
+.emptyCard {
+  height: 10px;
+  padding:0 1rem;
+  color:eee;
+  font-size: small;
+  overflow: height;
+  transition: height 400ms ease;
+  background: #eee;
+  opacity: 0.5;
+}
+.commentBadge{
+padding: 0.3rem 0.6rem;
+  border-radius: 0.2rem;
+  background-color: rgb(223, 225, 230);
+  color: rgb(23, 43, 77);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in;
+}
+.cardFooter{
+  display: flex;
+  -moz-box-pack: end;
+  justify-content: flex-end;
+ 
 }

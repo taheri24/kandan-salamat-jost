@@ -19,15 +19,33 @@
         cursor: pointer;
       }
     }
+    }
+
+  
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
 
     .deleteButton {
-      padding: 5px 10px;
+      padding: 8px 16px;
       background: #dc3545;
       color: white;
       border: none;
-      border-radius: 3px;
+      border-radius: 4px;
       cursor: pointer;
-      margin-left: 10px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: #c82333;
+      }
+
+      &:focus {
+        outline: 2px solid #dc3545;
+        outline-offset: 2px;
+      }
     }
   }
 }
@@ -62,14 +80,17 @@
       padding: 8px;
     }
 
-    button {
-      margin-top: 5px;
-      padding: 5px 10px;
-      background: #0079bf;
-      color: white;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-    }
+   
   }
+}
+
+ .addCommentBtn {
+  padding: 5px 10px;
+  background: #0079bf;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+justify-content: start;
 }

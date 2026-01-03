@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaEdit, FaComment } from 'react-icons/fa';
 import { useBoardState } from '@/contexts/BoardContext';
 import { Card as CardType } from '@/utils/types';
@@ -62,8 +62,27 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
       board.deleteCard(card.id);
     }
   };
-  return (
+  const boardState=board.getState();
+  const draggingTarget=card.id==boardState.board.dragOverID;
+  const emptyPlaceID =`emptyPlace_${card.id}`;
+  useEffect(function(){
+    if(draggingTarget){
+     setTimeout(function(){
+      const el=document.getElementById(emptyPlaceID);
+      if (el){   
+        el?.style.setProperty('height', '70px');
+      }
+     },10) 
+    }
+  },[draggingTarget])
+  return ( <>
+   {false && draggingTarget && boardState.board.draggingSourceID!=boardState.board.dragOverID &&  <section id={emptyPlaceID} className={styles.emptyCard}>
+          {board.getDraggingIndicatorText()}
+
+    </section>}
+   
     <div ref={setNodeRef} data-card-id={card.id} style={style} className={`${styles.card} ${isDragging ? styles.dragging : ''}`} {...attributes} {...listeners}>
+   
       <button role="button" className={styles.deleteCardBtn} onMouseDown={handleDelete}>
         ×
       </button>
@@ -80,23 +99,22 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
       ) :<></>}   
          
            <p style={{visibility:isEditing?'hidden':undefined}} className={styles.cardTitle} onDoubleClick={() => {
-            setIsEditing(true)
+            //setIsEditing(true)
            }}>
              <span className={styles.cardTitleText}>
-               {card.title}
+                {card.title}
              </span>
-             <button role="button" onMouseDown={(e) => { e.stopPropagation();board.editMode(card.id,false);  onClick?.() }} className={styles.editIcon}>
-               <FaEdit />
-             </button>
-           {card.comments.length > 0 && (
-               <span className={styles.commentBadge}>
-                 <FaComment /> {card.comments.length}
-               </span>
-             )}
             
            </p>
-            
+           <footer className={styles.cardFooter}>
+               <span role="button" onMouseDown={(e) => { e.stopPropagation();board.editMode(card.id,false);  onClick?.() }} className={styles.commentBadge}>
+                 { `Comments(${card.comments.length})`} 
+               </span>
+              
+            </footer>
        
     </div>
+    
+    </>
   );
 };

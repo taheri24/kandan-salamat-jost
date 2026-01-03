@@ -24,6 +24,7 @@ export default function BoardPage() {
   const handleListSelect = (listId: string) => {
     if (listId) {
       document.getElementById(listId)?.scrollIntoView({ behavior: 'smooth' });
+      document.scrollingElement?.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -32,8 +33,9 @@ export default function BoardPage() {
       <BoardHeader lists={lists} onListSelect={handleListSelect} />
       <ListContainer onCardClick={handleCardClick} />
       <Modal isOpen={!!selectedCardId} onClose={handleCloseModal}>
-        {selectedCardId && <CardModalContent cardId={selectedCardId} onClose={handleCloseModal} />}
+         <CardModalContent cardId={selectedCardId || undefined} onClose={handleCloseModal} />
       </Modal>
+      
     </div>
   );
 }

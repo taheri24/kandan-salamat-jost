@@ -134,3 +134,15 @@
     color: #172b4d;
   }
 }
+
+
+.emptyCard {
+  height: 10px;
+  padding:0 1rem;
+  color:eee;
+  font-size: small;
+  overflow: height;
+  transition: height 400ms ease;
+  background: #eee;
+  opacity: 0.5;
+}

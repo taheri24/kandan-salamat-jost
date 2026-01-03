@@ -13,7 +13,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        {children}
+        {isOpen ? children : undefined}
         <button className={styles.closeBtn} onClick={onClose}>×</button>
       </div>
     </div>

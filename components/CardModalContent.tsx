@@ -1,35 +1,43 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useBoardState } from '@/contexts/BoardContext';
 import { Card as CardType, Comment } from '@/utils/types';
 import styles from '@/styles/CardModalContent.module.scss';
 
 interface CardModalContentProps {
-  cardId: string;
+  cardId?: string;
   onClose: () => void;
 }
 
 export const CardModalContent: React.FC<CardModalContentProps> = ({ cardId, onClose }) => {
   const board = useBoardState();
   const state = board.getState();
-  const card = state.cards[cardId];
-  const comments = card.comments.map(commentId => state.comments[commentId]).filter(Boolean);
-  const [title, setTitle] = useState(card.title);
+  const card = cardId ? state.cards[cardId]: undefined;
+  const comments = card?.comments.map(commentId => state.comments[commentId]).filter(Boolean) || [];
+  const [title, setTitle] = useState(card?.title || ''  );
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newComment, setNewComment] = useState('');
+  const openTimeRef = useRef(+new Date());
+
+  const handleClose = useCallback(() => {
+    const now = +new Date();
+    if (now - openTimeRef.current < 400) return;
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        openTimeRef.current= 0;
+        handleClose();
       }
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onClose]);
+  }, [handleClose]);
 
   const handleTitleSubmit = () => {
     if (title.trim()) {
@@ -49,7 +57,7 @@ export const CardModalContent: React.FC<CardModalContentProps> = ({ cardId, onCl
 
   const handleDelete = () => {
     board.deleteCard(cardId);
-    onClose();
+    handleClose();
   };
 
   return (
@@ -68,7 +76,6 @@ export const CardModalContent: React.FC<CardModalContentProps> = ({ cardId, onCl
             <span onClick={() => setIsEditingTitle(true)}>{card.title}</span>
           )}
         </h2>
-        <button className={styles.deleteButton} onClick={handleDelete}>Delete</button>
       </div>
       <div className={styles.comments}>
         <h3>Comments</h3>
@@ -84,8 +91,12 @@ export const CardModalContent: React.FC<CardModalContentProps> = ({ cardId, onCl
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
           />
-          <button onClick={handleAddComment}>Save</button>
         </div>
+      </div>
+      <div className={styles.footer}>
+        <button className={styles.addCommentBtn} onClick={handleAddComment}>Add Comment</button>
+        <span style={{flex:1}}></span>
+        <button className={styles.deleteButton} onClick={handleDelete}>Delete</button>
       </div>
     </div>
   );

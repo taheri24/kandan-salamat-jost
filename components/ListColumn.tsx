@@ -33,10 +33,6 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
     data: { type: 'list' },
   });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
 
   const handleTitleSubmit = () => {
     if (title.trim()) {
@@ -45,7 +41,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
       setTitle(list.name);
     }
     setIsEditing(false);
-    board.editMode(list.id,false);
+    board.editMode(list.id, false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -54,13 +50,18 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
     } else if (e.key === 'Escape') {
       setTitle(list.name);
       setIsEditing(false);
-      board.editMode(list.id,false);
+      board.editMode(list.id, false);
 
     }
   };
 
   const handleDelete = () => {
-    board.deleteList(list.id);
+    board.editMode(list.id, false);
+    if (window.confirm('Are you sure you want to delete this list?')) {
+      board.deleteList(list.id);
+    }
+    board.editMode(list.id, false);
+
   };
 
   const handleAddCard = () => {
@@ -83,10 +84,28 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
       handleCancelCard();
     }
   };
+  const boardState = board.getState();
+  const draggingTarget = list.id == boardState.board.dragOverID;
+  const emptyPlaceID = `emptyPlace_${list.id}`;
+  React.useEffect(function () {
+    if (draggingTarget) {
+      setTimeout(function () {
+        const el = document.getElementById(emptyPlaceID);
+        if (el) {
+          el?.style.setProperty('height', '60px');
+        }
+      }, 10)
+    }
+  }, [draggingTarget])
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    cursor:draggingTarget?'pointer':undefined     
+  };
 
   return (
     <div ref={setNodeRef} style={style} id={list.id} className={styles.list}>
-      <div className={styles.listHeader} {...attributes} {...listeners}>
+      <div  className={styles.listHeader} {...attributes} {...listeners}>
         {isEditing ? (
           <input
             className={styles.listTitleInput}
@@ -101,17 +120,22 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
             {list.name}
           </h3>
         )}
-        <button className={styles.deleteListBtn} onClick={handleDelete}>
+        <button className={styles.deleteListBtn} role="button">
           ×
         </button>
       </div>
-      <SortableContext items={cards.map(c => c.id)} strategy={verticalListSortingStrategy}>
-        <div className={styles.cards}>
-          {cards.map(card => (
-            <CardItem key={card.id} card={card} listId={list.id} onClick={() => onCardClick?.(card.id)} />
-          ))}
-        </div>
-      </SortableContext>
+      <div className={styles.cards}  >
+        {  draggingTarget && boardState.board.draggingSourceID != boardState.board.dragOverID && <section id={emptyPlaceID} className={styles.emptyCard}>
+          {board.getDraggingIndicatorText()}
+        </section>}
+<div>
+        <SortableContext items={cards.map(c => c.id)} strategy={verticalListSortingStrategy}>
+        {cards.map(card => (
+          <CardItem key={card.id} card={card} listId={list.id} onClick={() => onCardClick?.(card.id)} />
+        ))}
+     </SortableContext>   
+     </div>   
+                </div>
       {isAddingCard ? (
         <div>
           <input

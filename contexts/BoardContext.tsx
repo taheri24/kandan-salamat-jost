@@ -3,12 +3,41 @@ import React, { createContext, useContext, useRef, useEffect, useReducer, useMem
 import { BoardState, Board as BoardType, List, Card, Comment } from '@/utils/types';
 import { useLocalStorageState } from '@/hooks/useLocalStorageState';
 import * as uuid from 'uuid'
+
+export const BOARD_EVENTS = {
+  BOARD_TITLE_UPDATED: 'boardTitleUpdated',
+  LIST_ADDED: 'listAdded',
+  LIST_TITLE_UPDATED: 'listTitleUpdated',
+  LIST_DELETED: 'listDeleted',
+  LISTS_REORDERED: 'listsReordered',
+  CARD_ADDED: 'cardAdded',
+  CARD_TITLE_UPDATED: 'cardTitleUpdated',
+  CARD_DELETED: 'cardDeleted',
+  CARD_MOVED: 'cardMoved',
+  COMMENT_ADDED: 'commentAdded',
+  CARD_SELECTED_TOGGLED: 'cardSelectedToggled',
+} as const;
+
+export type BoardEventName = typeof BOARD_EVENTS[keyof typeof BOARD_EVENTS];
+
 // Core-logic: Board state management
 export class Board {
-  public flags=new Map<string,any>()
+  allIDs(){
+    return Object.keys(this.state.lists).concat(Object.keys(this.state.cards));
+  }
+  getDraggingIndicatorText():string  {
+    const sourceName = this.getNameByID(this.state.board.draggingSourceID);
+    const overName = this.getNameByID(this.state.board.dragOverID);
+    const isOverCard = !!this.state.cards[this.state.board.dragOverID];
+    const isSrcCard = !!this.state.cards[this.state.board.draggingSourceID];
+    
+    const preposition = isOverCard==isSrcCard ? 'before' : 'to';
+    return `Moving "${sourceName}" ${preposition} "${overName}"`;
+  }
   private state: BoardState;
   private onSave: (state: BoardState) => void;
   private idCounter = 0;
+  private listeners = new Map<BoardEventName, Array<(data?: any) => void>>();
 
   constructor(initialState: BoardState | null, onSave: (state: BoardState) => void) {
     this.onSave = onSave;
@@ -32,6 +61,28 @@ export class Board {
     }
   }
 
+  public on(event: BoardEventName, listener: (data?: any) => void) {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, []);
+    }
+    this.listeners.get(event)!.push(listener);
+  }
+
+  public offAll() {
+    this.listeners.clear()
+  }
+
+  private emit(event: BoardEventName, data?: any) {
+    const list = this.listeners.get(event);
+    if (list) {
+      list.forEach(fn => fn(data));
+    }
+  }
+
+  private arraysEqual(a: string[], b: string[]): boolean {
+    return a.length === b.length && a.every((val, idx) => val === b[idx]);
+  }
+
   private generateId(): string {
     return `id${this.idCounter++}`;
   }
@@ -50,9 +101,11 @@ export class Board {
 
   // Core-logic: Board operations
   updateBoardTitle(name: string) {
+    if (name === this.state.board.name) return;
     this.state.board.name = name;
     this.state.board.revision++;
     this.save();
+    this.emit('boardTitleUpdated', { name });
   }
 
   addList(name: string) {
@@ -62,15 +115,16 @@ export class Board {
     this.state.board.lists.push(id);
     this.state.board.revision++;
     this.save();
+    this.emit('listAdded', { id, name });
   }
 
   updateListTitle(id: string, name: string) {
-    if (this.state.lists[id]) {
-      this.state.lists[id].name = name;
-      this.state.lists[id].revision++;
-      this.state.board.revision++;
-      this.save();
-    }
+    if (!this.state.lists[id] || name === this.state.lists[id].name) return;
+    this.state.lists[id].name = name;
+    this.state.lists[id].revision++;
+    this.state.board.revision++;
+    this.save();
+    this.emit('listTitleUpdated', { id, name });
   }
 
   deleteList(id: string) {
@@ -88,13 +142,16 @@ export class Board {
       this.state.board.lists = this.state.board.lists.filter(listId => listId !== id);
       this.state.board.revision++;
       this.save();
+      this.emit('listDeleted', { id });
     }
   }
 
   reorderLists(newOrder: string[]) {
+    if (this.arraysEqual(newOrder, this.state.board.lists)) return;
     this.state.board.lists = newOrder;
     this.state.board.revision++;
     this.save();
+    this.emit('listsReordered', { newOrder });
   }
 
   addCard(listId: string, title: string) {
@@ -106,23 +163,24 @@ export class Board {
       this.state.lists[listId].revision++;
       this.state.board.revision++;
       this.save();
+      this.emit('cardAdded', { id, listId, title });
     }
   }
 
   updateCardTitle(id: string, title: string) {
-    if (this.state.cards[id]) {
-      this.state.cards[id].title = title;
-      this.state.cards[id].revision++;
-      // Update list revision
-      for (const list of Object.values(this.state.lists)) {
-        if (list.cards.includes(id)) {
-          list.revision++;
-          break;
-        }
+    if (!this.state.cards[id] || title === this.state.cards[id].title) return;
+    this.state.cards[id].title = title;
+    this.state.cards[id].revision++;
+    // Update list revision
+    for (const list of Object.values(this.state.lists)) {
+      if (list.cards.includes(id)) {
+        list.revision++;
+        break;
       }
-      this.state.board.revision++;
-      this.save();
     }
+    this.state.board.revision++;
+    this.save();
+    this.emit('cardTitleUpdated', { id, title });
   }
 
   deleteCard(id: string) {
@@ -141,29 +199,49 @@ export class Board {
       }
       this.state.board.revision++;
       this.save();
+      this.emit('cardDeleted', { id });
     }
   }
-
-  moveCard(cardId: string, toListId: string, index?: number) {
-    if (this.state.cards[cardId] && this.state.lists[toListId]) {
-      // Remove from current list
-      for (const list of Object.values(this.state.lists)) {
-        if (list.cards.includes(cardId)) {
-          list.cards = list.cards.filter(id => id !== cardId);
-          list.revision++;
-        }
-      }
-      // Add to new list at specified index or end
-      const cards = this.state.lists[toListId].cards;
-      if (index !== undefined && index >= 0 && index <= cards.length) {
-        cards.splice(index, 0, cardId);
-      } else {
-        cards.push(cardId);
-      }
-      this.state.lists[toListId].revision++;
-      this.state.board.revision++;
-      this.save();
+  getListID(cardId:string){
+    if(cardId==null || !this.state.cards[cardId]) return null;
+    return Object.values(this.state.lists).find(l => l.cards.includes(cardId))?.id;
+  }
+  getNameByID(id:string){
+    const card=this.state.cards[id  ];
+    if(card){
+      return card.title
     }
+    const list=this.state.lists[id];
+    if(list){
+      return list.name
+    }
+    return ''
+  }
+  moveCard(cardId: string, toListId: string, index?: number) {
+    if (!this.state.cards[cardId] || !this.state.lists[toListId]) return;
+    const currentList = Object.values(this.state.lists).find(l => l.cards.includes(cardId));
+    if (!currentList) return;
+    const currentIndex = currentList.cards.indexOf(cardId);
+    const targetIndex = index !== undefined ? index : this.state.lists[toListId].cards.length;
+    if (currentList.id === toListId && currentIndex === targetIndex) return;
+    // Remove from current list
+    for (const list of Object.values(this.state.lists)) {
+      if (list.cards.includes(cardId)) {
+        list.cards = list.cards.filter(id => id !== cardId);
+        list.revision++;
+      }
+    }
+    // Add to new list at specified index or end
+    const cards = this.state.lists[toListId].cards;
+    if (index !== undefined && index >= 0 && index <= cards.length) {
+      cards.splice(index, 0, cardId);
+    } else {
+      cards.push(cardId);
+    }
+    this.state.lists[toListId].revision++;
+    this.state.board.revision++;
+    this.save();
+    this.emit('cardMoved', { cardId, toListId, index });
   }
 
   addComment(cardId: string, text: string, author?: string) {
@@ -182,14 +260,29 @@ export class Board {
       }
       this.state.board.revision++;
       this.save();
+      this.emit('commentAdded', { id, cardId, text, author });
     }
   }
+  setDragOverID(id:string){
+    this.state.board.dragOverID=id;
+    
+    if(!id){
+      for (const listId of  Object.keys(this.state.lists)){
+        this.state.lists[listId].dragging=false;  
+      }
+      return ;
+    }
 
-  toggleCardSelected(id: string) {
-    if (this.state.cards[id]) {
-      this.state.cards[id].selected = !this.state.cards[id].selected;
-      this.state.cards[id].revision++;
-      this.save();
+    const list=this.state.lists[id];
+    if(list){
+      list.draggingTimeStamp=+Date.now();
+      list.dragging=true;
+      this.state.board.dragOverListID=list.id;
+    }
+    const card=this.state.cards[id];
+    const listOfCard=this.state.lists[this.getListID(id) || ''];
+    if(card){
+      listOfCard.draggingTimeStamp=+Date.now();
     }
   }
   editMode(id:string,nextState:boolean){
@@ -201,6 +294,9 @@ export class Board {
      if(list){
        list.editing=nextState;
      } 
+  }
+  setDraggingSource(id:string){
+    this.state.board.draggingSourceID=id;
   }
 }
 

@@ -1,4 +1,8 @@
 export interface Board {
+  draggingSourceID: string;
+  dragOverID: string;
+  dragOverListID: string;
+  
   id: string;
   name: string;
   lists: string[]; // array of list ids
@@ -11,6 +15,8 @@ export interface List {
   cards: string[]; // array of card ids
   revision: number;
   editing?:boolean;
+  draggingTimeStamp?:number;
+  dragging?:boolean;
 }
 
 export interface Card {
