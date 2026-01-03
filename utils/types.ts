@@ -1,8 +1,4 @@
 export interface Board {
-  draggingSourceID?: string;
-  dragOverID?: string;
-  dragOverListID?: string;
-  
   id: string;
   name: string;
   lists: string[]; // array of list ids
@@ -40,6 +36,9 @@ export interface Comment {
 
 export interface BoardState {
   board: Board;
+  draggingSourceID?: string;
+  dragOverID?: string;
+  dragOverListID?: string;
   lists: Record<string, List>;
   cards: Record<string, Card>;
   comments: Record<string, Comment>;

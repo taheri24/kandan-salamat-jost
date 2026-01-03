@@ -63,7 +63,7 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
     }
   };
   const boardState=board.getState();
-  const draggingTarget=card.id==boardState.board.dragOverID;
+  const draggingTarget=card.id==boardState.dragOverID;
   const emptyPlaceID =`emptyPlace_${card.id}`;
   useEffect(function(){
     if(draggingTarget){
@@ -76,7 +76,7 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
     }
   },[draggingTarget])
   return ( <>
-   {false && draggingTarget && boardState.board.draggingSourceID!=boardState.board.dragOverID &&  <section id={emptyPlaceID} className={styles.emptyCard}>
+   {false && draggingTarget && boardState.draggingSourceID!=boardState.dragOverID &&  <section id={emptyPlaceID} className={styles.emptyCard}>
           {board.getDraggingIndicatorText()}
 
     </section>}

@@ -85,7 +85,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
     }
   };
   const boardState = board.getState();
-  const draggingTarget = list.id == boardState.board.dragOverID;
+  const draggingTarget = list.id == boardState.dragOverID;
   const emptyPlaceID = `emptyPlace_${list.id}`;
   React.useEffect(function () {
     if (draggingTarget) {
@@ -100,12 +100,11 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    cursor:draggingTarget?'pointer':undefined     
   };
 
   return (
-    <div ref={setNodeRef} style={style} id={list.id} className={styles.list}>
-      <div  className={styles.listHeader} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} id={list.id} className={styles.list} {...attributes} {...listeners}>
+      <div  className={styles.listHeader} >
         {isEditing ? (
           <input
             className={styles.listTitleInput}
@@ -120,12 +119,12 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
             {list.name}
           </h3>
         )}
-        <button className={styles.deleteListBtn} role="button">
+        <button onMouseUp={handleDelete}  className={styles.deleteListBtn} role="button">
           ×
         </button>
       </div>
       <div className={styles.cards}  >
-        {  draggingTarget && boardState.board.draggingSourceID != boardState.board.dragOverID && <section id={emptyPlaceID} className={styles.emptyCard}>
+        {  draggingTarget && boardState.draggingSourceID != boardState.dragOverID && <section id={emptyPlaceID} className={styles.emptyCard}>
           {board.getDraggingIndicatorText()}
         </section>}
 <div>

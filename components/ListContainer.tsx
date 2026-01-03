@@ -117,7 +117,7 @@ console.log({sourceElement},srcRole);
   }
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragMove={handleDragMove} >
-      <div key={key} className={styles.listContainer}>
+      <div  className={styles.listContainer}>
         <SortableContext items={lists.map(l => l.id)} strategy={horizontalListSortingStrategy}>
           {lists.map(list => (
             <ListColumn key={list.id} list={list} onCardClick={onCardClick} />

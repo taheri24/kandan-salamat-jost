@@ -27,10 +27,10 @@ export class Board {
     return Object.keys(this.state.lists).concat(Object.keys(this.state.cards));
   }
   getDraggingIndicatorText():string  {
-    const sourceName = this.getNameByID(this.state.board.draggingSourceID||'');
-    const overName = this.getNameByID(this.state.board.dragOverID || '');
-    const isOverCard = !!this.state.cards[this.state.board.dragOverID|| ''];
-    const isSrcCard = !!this.state.cards[this.state.board.draggingSourceID || ''];
+    const sourceName = this.getNameByID(this.state.draggingSourceID||'');
+    const overName = this.getNameByID(this.state.dragOverID || '');
+    const isOverCard = !!this.state.cards[this.state.dragOverID|| ''];
+    const isSrcCard = !!this.state.cards[this.state.draggingSourceID || ''];
     
     const preposition = isOverCard==isSrcCard ? 'before' : 'to';
     return `Moving "${sourceName}" ${preposition} "${overName}"`;
@@ -264,7 +264,7 @@ export class Board {
     }
   }
   setDragOverID(id:string){
-    this.state.board.dragOverID=id;
+    this.state.dragOverID=id;
     
     if(!id){
       for (const listId of  Object.keys(this.state.lists)){
@@ -277,7 +277,7 @@ export class Board {
     if(list){
       list.draggingTimeStamp=+Date.now();
       list.dragging=true;
-      this.state.board.dragOverListID=list.id;
+      this.state.dragOverListID=list.id;
     }
     const card=this.state.cards[id];
     const listOfCard=this.state.lists[this.getListID(id) || ''];
@@ -306,7 +306,7 @@ export class Board {
      } 
   }
   setDraggingSource(id:string){
-    this.state.board.draggingSourceID=id;
+    this.state.draggingSourceID=id;
   }
 }
 
