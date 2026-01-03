@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit, FaComment } from 'react-icons/fa';
 import { useBoardState } from '@/contexts/BoardContext';
 import { Card as CardType } from '@/utils/types';
 import { useSortable } from '@dnd-kit/sortable';
@@ -26,6 +26,7 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
     setNodeRef,
     transform,
     transition,
+    isDragging,
   } = useSortable({
     id: card.id,
     data: { type: 'card', listId },
@@ -57,9 +58,8 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
   const handleDelete = () => {
     board.deleteCard(card.id);
   };
-console.log(styles);
   return (
-    <div ref={setNodeRef} style={style} className={styles.card} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} className={`${styles.card} ${isDragging ? styles.dragging : ''}`} {...attributes} {...listeners}>
       <button className={styles.deleteCardBtn} onClick={handleDelete}>
         ×
       </button>
@@ -75,18 +75,19 @@ console.log(styles);
         />
       ) : (
         <>
-          <p 
-             
-
-          className={styles.cardTitle} onDoubleClick={() => setIsEditing(true)}>
-         <span className="text"          >    
-            {card.title}
-            </span>
-<button onMouseUp={(e) => { e.stopPropagation(); onClick?.() }}  className={styles.editIcon} >
-  <FaEdit />
-</button>
-
-            </p>
+           <p className={styles.cardTitle} onDoubleClick={() => setIsEditing(true)}>
+             <span className={styles.cardTitleText}>
+               {card.title}
+             </span>
+             {card.comments.length > 0 && (
+               <span className={styles.commentBadge}>
+                 <FaComment /> {card.comments.length}
+               </span>
+             )}
+             <button onMouseUp={(e) => { e.stopPropagation(); onClick?.() }} className={styles.editIcon}>
+               <FaEdit />
+             </button>
+           </p>
             
         </>
       )}
