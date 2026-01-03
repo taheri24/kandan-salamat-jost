@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useBoardState } from '@/contexts/BoardContext';
 import { List } from '@/utils/types';
+import { seedBoard } from '@/utils/seed';
 
 interface BoardHeaderProps {
   lists: List[];
@@ -12,6 +13,7 @@ interface BoardHeaderProps {
 export default function BoardHeader({ lists, onListSelect }:BoardHeaderProps) {
   const board = useBoardState();
   const state = board.getState();
+  const [isSeeded, setIsSeeded] = useState(false);
 
   return (
     <header className='board-header'>
@@ -22,6 +24,15 @@ export default function BoardHeader({ lists, onListSelect }:BoardHeaderProps) {
           <option key={list.id} value={list.id}>{list.name}</option>
         ))}
       </select>
+      <button className={`seed-button ${isSeeded ? 'seeded' : ''}`} onClick={() => {
+        const before = state.board.lists.length;
+        seedBoard(board);
+        const after = board.getState().board.lists.length;
+        if (after > before) {
+          setIsSeeded(true);
+          setTimeout(() => setIsSeeded(false), 1000); // Reset after animation
+        }
+      }}>Seed Board</button>
     </header>
   );
 };

@@ -3,6 +3,7 @@ import React, { createContext, useContext, useRef, useEffect, useReducer, useMem
 import { BoardState, Board as BoardType, List, Card, Comment } from '@/utils/types';
 import { useLocalStorageState } from '@/hooks/useLocalStorageState';
 import * as uuid from 'uuid'
+import { seedBoard } from '@/utils/seed';
 
 export const BOARD_EVENTS = {
   BOARD_TITLE_UPDATED: 'boardTitleUpdated',
@@ -26,15 +27,15 @@ export class Board {
     return Object.keys(this.state.lists).concat(Object.keys(this.state.cards));
   }
   getDraggingIndicatorText():string  {
-    const sourceName = this.getNameByID(this.state.board.draggingSourceID);
-    const overName = this.getNameByID(this.state.board.dragOverID);
-    const isOverCard = !!this.state.cards[this.state.board.dragOverID];
-    const isSrcCard = !!this.state.cards[this.state.board.draggingSourceID];
+    const sourceName = this.getNameByID(this.state.board.draggingSourceID||'');
+    const overName = this.getNameByID(this.state.board.dragOverID || '');
+    const isOverCard = !!this.state.cards[this.state.board.dragOverID|| ''];
+    const isSrcCard = !!this.state.cards[this.state.board.draggingSourceID || ''];
     
     const preposition = isOverCard==isSrcCard ? 'before' : 'to';
     return `Moving "${sourceName}" ${preposition} "${overName}"`;
   }
-  private state: BoardState;
+    state: BoardState;
   private onSave: (state: BoardState) => void;
   private idCounter = 0;
   private listeners = new Map<BoardEventName, Array<(data?: any) => void>>();
@@ -52,12 +53,8 @@ export class Board {
       ];
       this.idCounter = Math.max(...allIds.map(id => parseInt(id.replace(/\D/g, '')) || 0)) + 1;
     } else {
-      this.state = {
-        board: { id: this.generateId(), name: 'My Board', lists: [], revision: 0 },
-        lists: {},
-        cards: {},
-        comments: {},
-      };
+      seedBoard(this);
+      this.state = this.getState();
     }
   }
 

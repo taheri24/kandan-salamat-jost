@@ -1,14 +1,18 @@
 // utils/seed.ts
 import { Board } from '@/contexts/BoardContext';
+import { BoardState } from '@/utils/types';
+import { v4 } from 'uuid';
 
 export function seedBoard(board: Board) {
+  
   // Clear existing data if any
-  const state = board.getState();
-  if (state.board.lists.length > 0) {
-    // Optionally clear, but for now, add if empty
-    return;
-  }
-
+   board.state = {
+    board: { id: v4(), name: 'Demo Board', lists: [], revision: 0 },
+    lists: {},
+    cards: {},
+    comments: {},
+  } as BoardState;
+  
   // Add sample lists
   board.addList('To Do');
   board.addList('In Progress');

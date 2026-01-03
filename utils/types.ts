@@ -1,7 +1,7 @@
 export interface Board {
-  draggingSourceID: string;
-  dragOverID: string;
-  dragOverListID: string;
+  draggingSourceID?: string;
+  dragOverID?: string;
+  dragOverListID?: string;
   
   id: string;
   name: string;
