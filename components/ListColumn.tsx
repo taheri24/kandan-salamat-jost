@@ -123,7 +123,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
             {list.name}
           </h3>
         )}
-        <button onMouseUp={handleDelete}  className={styles.deleteListBtn} role="button">
+        <button onMouseUp={(e) => { if (e.button === 2) return; handleDelete(); }}  className={styles.deleteListBtn} role="button">
           ×
         </button>
       </div>
@@ -158,7 +158,7 @@ export const ListColumn: React.FC<ListColumnProps> = ({ list, onCardClick }) => 
           </div>
         </div>
       ) : (
-        <div role="button" data-role="button" className={styles.addCard} onMouseUp={(e =>{  e.stopPropagation();e.preventDefault(); setIsAddingCard(true) })}>
+        <div role="button" data-role="button" className={styles.addCard} onMouseUp={(e =>{ if (e.button === 2) return; e.stopPropagation();e.preventDefault(); setIsAddingCard(true) })}>
           + Add another card
         </div>
       )}

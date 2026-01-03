@@ -137,7 +137,7 @@ console.log({sourceElement},sourceElement?.innerHTML,srcRole);
             </div>
           </div>
         ) : (
-          <div role="button" className={styles.addList} onMouseUp={() => setIsAdding(true)}>
+          <div role="button" className={styles.addList} onMouseUp={(e) => { if (e.button === 2) return; setIsAdding(true); }}>
             + Add another list
           </div>
         )}

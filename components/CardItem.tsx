@@ -83,7 +83,7 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
    
     <div ref={setNodeRef} data-card-id={card.id} style={style} className={`${styles.card} ${isDragging ? styles.dragging : ''}`} {...attributes} {...listeners}>
    
-      <button role="button" className={styles.deleteCardBtn} onMouseDown={handleDelete}>
+      <button role="button" className={styles.deleteCardBtn} onMouseDown={(e) => { if (e.button === 2) return; handleDelete(); }}>
         ×
       </button>
        
@@ -107,7 +107,7 @@ export const CardItem: React.FC<CardItemProps> = ({ card, listId, onClick }) => 
             
            </p>
            <footer className={styles.cardFooter}>
-               <span role="button" onMouseDown={(e) => { e.stopPropagation();board.editMode(card.id,false);  onClick?.() }} className={styles.commentBadge}>
+                <span role="button" onMouseDown={(e) => { if (e.button === 2) return; e.stopPropagation();board.editMode(card.id,false);  onClick?.() }} className={styles.commentBadge}>
                  { `Comments(${card.comments.length})`} 
                </span>
               
